@@ -8,6 +8,11 @@ namespace WebApiMovies.Data
         public MovieDBContext(DbContextOptions<MovieDBContext> options)
         : base(options) { }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Movie>().HasIndex(i => i.ResponseId).IsUnique();
+        }
+
         DbSet<Movie> Movies {  get; set; }
 
     }
