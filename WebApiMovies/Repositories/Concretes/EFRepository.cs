@@ -29,9 +29,11 @@ namespace WebApiMovies.Repositories.Concretes
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<TEntity>> GetAllAsync()
+        public async Task<IEnumerable<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>>? filter = null)
         {
-            throw new NotImplementedException();
+            return filter == null ?
+               await context.Set<TEntity>().ToListAsync() :
+           await context.Set<TEntity>().Where(filter).ToListAsync();
         }
 
         public Task<TEntity> GetByIdAsync(Expression<Func<TEntity, bool>> expression)
