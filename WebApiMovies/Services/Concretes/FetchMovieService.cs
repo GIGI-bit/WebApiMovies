@@ -1,6 +1,7 @@
 ﻿
 using Newtonsoft.Json.Linq;
 using RestSharp;
+using WebApiMovies.Data;
 using WebApiMovies.Entites;
 using WebApiMovies.Services.Abstracts;
 
@@ -8,29 +9,33 @@ namespace WebApiMovies.Services.Concretes
 {
     public class FetchMovieService : BackgroundService
     {
-        private readonly IMovieService movieService;
-
-        public FetchMovieService(IMovieService movieService)
+        private readonly IServiceProvider _serviceProvider;
+        public FetchMovieService( IServiceProvider serviceProvider)
         {
-            this.movieService = movieService;
+            _serviceProvider = serviceProvider;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                int asscciNumber = (new Random()).Next(65, 91);
-                string selectedLetter = ((char)asscciNumber).ToString();
-                var response =await GetDataFromUrlAsync( selectedLetter);
-                var list = ParseJsonToMovie(response, selectedLetter);
-                foreach (var item in list)
+                using (var scope = _serviceProvider.CreateScope())
                 {
-                    if(list.FirstOrDefault(i=> i.ResponseId==item.ResponseId) == null)
+                    //var movieService = scope.ServiceProvider.GetRequiredService<MovieService>();
+                    var movieDb = scope.ServiceProvider.GetRequiredService<MovieDBContext>();
+                    int asscciNumber = (new Random()).Next(65, 91);
+                    string selectedLetter = ((char)asscciNumber).ToString();
+                    var response = await GetDataFromUrlAsync(selectedLetter);
+                    var list = ParseJsonToMovie(response, selectedLetter);
+                    foreach (var item in list)
                     {
-                        await movieService.Add(item);
+                        if (movieDb.Movies.FirstOrDefault(i => i.ResponseId == item.ResponseId) == null)
+                        {
+                            movieDb.Movies.Add(item);
+                        }
                     }
+                    await movieDb.SaveChangesAsync();
                 }
-
                 await Task.Delay(TimeSpan.FromMinutes(15), stoppingToken);
             }
         }
@@ -48,7 +53,7 @@ namespace WebApiMovies.Services.Concretes
             return response.Content;
         }
 
-        public List<Movie> ParseJsonToMovie(string response,string selectedLetter)
+        public List<Movie> ParseJsonToMovie(string response, string selectedLetter)
         {
             JObject jsonObject = JObject.Parse(response);
             JArray jArray = (JArray)jsonObject["results"];

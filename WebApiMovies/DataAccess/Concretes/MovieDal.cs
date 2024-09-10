@@ -7,7 +7,7 @@ namespace WebApiMovies.DataAccess.Concretes
 {
     public class MovieDal: EFRepository<Movie, MovieDBContext>, IMovieDal
     {
-        public MovieDal(MovieDBContext movieDBContext)
+        public MovieDal(MovieDBContext movieDBContext):base(movieDBContext)
         {
         }
     }

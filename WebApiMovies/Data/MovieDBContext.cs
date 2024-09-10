@@ -13,7 +13,7 @@ namespace WebApiMovies.Data
             modelBuilder.Entity<Movie>().HasIndex(i => i.ResponseId).IsUnique();
         }
 
-        DbSet<Movie> Movies {  get; set; }
+        public DbSet<Movie> Movies {  get; set; }
 
     }
 }

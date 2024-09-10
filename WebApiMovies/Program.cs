@@ -1,5 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using WebApiMovies.Data;
+using WebApiMovies.DataAccess.Abstracts;
+using WebApiMovies.DataAccess.Concretes;
+using WebApiMovies.Repositories.Abstracts;
+using WebApiMovies.Repositories.Concretes;
+using WebApiMovies.Services.Abstracts;
 using WebApiMovies.Services.Concretes;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +16,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddScoped<IMovieDal, MovieDal>();
+builder.Services.AddScoped<IMovieService, MovieService>();
+//builder.Services.AddHttpClient<MovieService>();
 builder.Services.AddHostedService<FetchMovieService>();
 
 var con = builder.Configuration.GetConnectionString("Default");

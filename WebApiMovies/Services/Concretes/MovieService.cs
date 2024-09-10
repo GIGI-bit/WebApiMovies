@@ -26,9 +26,9 @@ namespace WebApiMovies.Services.Concretes
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Movie>> GetAllAsync()
+        public async Task<IEnumerable<Movie>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _movieDal.GetAllAsync();
         }
 
         public Task<Movie> GetByIdAsync(Expression<Func<Movie, bool>> expression)
