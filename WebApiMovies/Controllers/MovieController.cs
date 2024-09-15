@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Linq.Expressions;
 using WebApiMovies.Entites;
 using WebApiMovies.Model;
 using WebApiMovies.Services.Abstracts;
@@ -38,22 +39,14 @@ namespace WebApiMovies.Controllers
             return "value";
         }
 
-        // POST api/<MovieController>
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/<MovieController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
         // DELETE api/<MovieController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
+            var valute = await _movieService.GetByIdAsync(entity => entity.Id == id );
+            if (valute == null) return NotFound();
+            await _movieService.Delete(valute);
+            return Ok();
         }
     }
 }

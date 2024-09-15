@@ -36,7 +36,7 @@ namespace WebApiMovies.Services.Concretes
                     }
                     await movieDb.SaveChangesAsync();
                 }
-                await Task.Delay(TimeSpan.FromMinutes(15), stoppingToken);
+                await Task.Delay(TimeSpan.FromMinutes(10), stoppingToken);
             }
         }
 

@@ -24,9 +24,12 @@ namespace WebApiMovies.Repositories.Concretes
             await context.SaveChangesAsync();
         }
 
-        public Task Delete(TEntity entity)
+        public async Task Delete(TEntity entity)
         {
-            throw new NotImplementedException();
+            await Task.Run(() =>
+            {
+                context.Remove(entity);
+            });
         }
 
         public async Task<IEnumerable<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>>? filter = null)
@@ -36,9 +39,9 @@ namespace WebApiMovies.Repositories.Concretes
            await context.Set<TEntity>().Where(filter).ToListAsync();
         }
 
-        public Task<TEntity> GetByIdAsync(Expression<Func<TEntity, bool>> expression)
+        public async Task<TEntity> GetByIdAsync(Expression<Func<TEntity, bool>> expression)
         {
-            throw new NotImplementedException();
+            return await context.Set<TEntity>().SingleOrDefaultAsync(expression);
         }
     }
 }
